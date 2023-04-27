@@ -1,0 +1,110 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Location Finder";
+}
+
+<h1>Location Finder</h1>
+
+<form id="locationFinderForm">
+    <div>
+        
+        <label for="streetInput">Street:</label>
+        <input type="text" id="streetInput" name="Street" required>
+    </div>
+    <div>
+        <style>
+            label {
+                display: inline-block;
+                width: 100px; /* adjust this value to suit your needs */
+                text-align: right;
+                margin-right: 10px;
+                font-weight: bold;
+            }
+            input[type="text"] 
+            {
+                 border: 2px solid #ccc; /* set the border style and color */
+                 border-width: 3px; /* set the border width */
+    /* other styles for the text box */
+            }
+            img.eucharist{
+                width: 300px;
+                height: 300px;
+                float:right;
+                position: absolute;
+                right: 500px;
+                top: 55px
+                
+            }
+            #locationFinderResult {
+        background-color: #f5f5f5;
+        border-radius: 4px;
+        margin-top: 40px;
+        padding: 20px;
+        text-align: left;
+    }
+
+    #locationFinderResult p {
+        margin: 10px 0;
+    }
+
+    #locationFinderResult strong {
+        font-weight: bold;
+    }
+
+        </style>
+        <label for="cityInput">City:</label>
+        <input type="text" id="cityInput" name="City" required>
+    </div>
+    <div>
+        <label for="stateInput">State:</label>
+        <input type="text" id="stateInput" name="State" required>
+    </div>
+    <div>
+        <label for="zipInput">Zip:</label>
+        <input type="text" id="zipInput" name="Zip" required>
+    </div>
+    <button type="submit">Find Location</button>
+    <img src="https://drive.google.com/uc?export=download&id=1fU_0Z1pL_QL6VnHGQXcRYMpB_SzDXYxF" class="eucharist" />
+</form>
+
+<div id="locationFinderResult"></div>
+
+@section Scripts {
+    <script>
+        $("#locationFinderForm").submit(function (event) {
+            event.preventDefault();
+            var requestData = {
+                Street: $("#streetInput").val(),
+                City: $("#cityInput").val(),
+                State: $("#stateInput").val(),
+                Zip: $("#zipInput").val()
+            };
+            $.ajax({
+                type: "POST",
+                url: "https://localhost:7065/LocationFinder/LocationFinder",
+                data: JSON.stringify(requestData),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    var videoId = response.videoLink.split('=')[1];
+                    var embedUrl = 'https://www.youtube.com/embed/' + videoId;
+                    var locationHtml = '<div class="location-info">' +
+                        '<p><strong>Location Name:</strong> ' + response.locationName + '</p>' +
+                        '<p><strong>Street:</strong> ' + response.street + '</p>' +
+                        '<p><strong>City:</strong> ' + response.city + '</p>' +
+                        '<p><strong>State:</strong> ' + response.state + '</p>' +
+                        '<p><strong>Zip:</strong> ' + response.zip + '</p>' +
+                        '<p><strong>Latitude:</strong> ' + response.latitude + '</p>' +
+                        '<p><strong>Longitude:</strong> ' + response.longitude + '</p>' +
+                        '<iframe width="560" height="315" src="' + embedUrl + '" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>' +
+                        '</div>';
+                    $("#locationFinderResult").html(locationHtml);
+                },
+                error: function () {
+                    $("#locationFinderResult").html("Error occurred while finding location.");
+                }
+            });
+        });
+    </script>
+} 
