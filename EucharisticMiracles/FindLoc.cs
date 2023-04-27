@@ -54,7 +54,7 @@ namespace EucharisticMiracles
 
         static async Task<Location> GeocodeAddress(string address)
         {
-            string apiKey = "AIzaSyAiVU8CwxUbsI875Z2q099AYZaedjii400"; // Replace with your own API key
+            string apiKey = "LOCALAPIKEY"; // Replace with your own API key
             string apiUrl = $"https://maps.googleapis.com/maps/api/geocode/json?address={Uri.EscapeDataString(address)}&key={apiKey}";
 
             using var httpClient = new HttpClient();
